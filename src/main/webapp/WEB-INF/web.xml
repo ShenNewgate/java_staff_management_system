@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+	<!-- 1.启动Spring容器 （项目一启动，首先就会加载applicationContext.xml文件）-->
+	<!-- alt+/往下找到提示# contextloaderlistener-ContextLoaderListener-->
+	<context-param>
+	    <param-name>contextConfigLocation</param-name>
+	    <param-value>
+	        classpath:applicationContext.xml
+	    </param-value>
+	</context-param>
+	<listener>
+	    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<!-- 2 springMVC前端控制器，拦截所有请求 -->
+	<!-- alt+/ 往下找到提示# dispatcherservlet-DispatcherServlet declaration-->
+	<!-- 与web.xml同级目录下及在WEB-INF下创建一个名称为dispatcherServlet-servlet的Spring BeanConfiguration File文件 -->
+	<!-- dispatcherServlet就是前端控制器的名字 -->
+	<!-- The front controller of this Spring Web application, responsible for handling all application requests -->
+	<servlet>
+		<servlet-name>dispatcherServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- Map all requests to the DispatcherServlet for handling -->
+	<servlet-mapping>
+		<servlet-name>dispatcherServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<!-- 3 字符编码过滤器,一定要放在所有过滤器之前(顺手配上习惯) -->
+	<filter>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<!-- 初始化参数中有encoding,forceRequestEncoding和forceResponseEncoding属性 （通过ctrl+shift+t然后搜索CharacterEncodingFilter得知）-->
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>		
+		</init-param>
+		<init-param>
+			<param-name>forceRequestEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceResponseEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- 4 使用Rest风格的URI（如果是从页面发请求发不出delete,put请求之类的，所以还需要一个转换post请求的过滤器） -->
+	<!-- HiddenHttpMethodFilter过滤器把将页面普通的post请求转为delete或者put请求-->
+	<!-- 通过ctrl+shift+t然后搜索 HiddenHttpMethodFilter-->
+		<filter>
+			<filter-name>HiddenHttpMethodFilter</filter-name>
+			<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+		</filter>
+		<filter-mapping>
+			<filter-name>HiddenHttpMethodFilter</filter-name>	
+			<url-pattern>/*</url-pattern>
+		</filter-mapping>
+	
+</web-app>
